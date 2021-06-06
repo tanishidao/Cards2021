@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,8 +20,14 @@ public class Deck : MonoBehaviour
     }
 
     ///<summary>
-    ///カードをDeck中から取得
+    ///カードをDeck中からget
     /// </summary>
+    public static List<Card> ShuffleDeck(List<Card> deck)
+    {
+        var shuffleDeck = deck.OrderBy(card => Guid.NewGuid()).ToList();///orderbyは昇順にする、guidは16進数
+        return shuffleDeck;
+    }
+
     public static Card GetCard(List<Card> deck)
     {
         Card card = deck.First();

@@ -4,18 +4,41 @@ using UnityEngine;
 
 public class Dealer : MonoBehaviour///‚±‚ê‚ª‚ ‚é‚Æ’Pˆê‚Å“®ì‚Å‚«‚é‚à‚Ì‚Ñ
 {
-    
+
     public const int PlayerDealNum = 5;
-    public List<Card> GameDeck;
+    public List<Card> GameDeck = new List<Card>();
+    public List<Card> PlayerHand = new List<Card>();
     private void Start()
     {
-        GameDeck = Deck.GetDeck();
-        for(int i = 0; i < PlayerDealNum; i++)
-        {
-            Card TakeCard = Deck.GetCard(GameDeck);
-            Debug.Log($"{TakeCard.CardSuit}:{TakeCard.CardNumber}");
-        }
+        GameDeck = Deck.ShuffleDeck(Deck.GetDeck());
+
 
     }
-    
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            CardDeal();
+        }
+    }
+
+    private void CardDeal()
+    {
+        PlayerHand.Clear();
+        if(GameDeck.Count > PlayerDealNum)
+        {
+            GameDeck.Clear();
+            GameDeck = Deck.ShuffleDeck(Deck.GetDeck());
+        }
+        for(int i = 0; i < PlayerDealNum; i++)
+        {
+            PlayerHand.Add(Deck.GetCard(GameDeck));
+        }
+        foreach(var card in PlayerHand)
+        {
+            Debug.Log($"{card.CardSuit}:{card.CardNumber}");
+        }
+        Debug.Log(PokerHand.CardHand(PlayerHand));
+    }
+
 }
