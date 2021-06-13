@@ -7,12 +7,18 @@ using UnityEngine.UI;
 public class Dealer : MonoBehaviour///これがあると単一で動作できるものび
 {
 
-    public const int PlayerDealNum = 5;
+    public const int DealNum = 5;
     public List<Card> GameDeck = new List<Card>();
+    
     public List<Card> PlayerHand = new List<Card>();
-
-    public Image[] cards = new Image[5];
+    public List<Card> EnemyHand = new List<Card>();
+   
+    public Image[] Playercards = new Image[5];
+    public Image[] EnemyCards = new Image[5];
+    
     public SpriteAtlas spriteAtlas;
+    public GameResult GameResult;
+    public GameObject ShowDeal = null ;
     
     private void Start()
     {
@@ -25,27 +31,49 @@ public class Dealer : MonoBehaviour///これがあると単一で動作できるものび
         if(Input.GetKeyDown(KeyCode.Space))
         {
             CardDeal();
+            
         }
     }
 
     private void CardDeal()
     {
         PlayerHand.Clear();
-        if(GameDeck.Count > PlayerDealNum)
+        if(GameDeck.Count < DealNum)
         {
             GameDeck.Clear();
             GameDeck = Deck.ShuffleDeck(Deck.GetDeck());
         }
-        for(int i = 0; i < PlayerDealNum; i++)
+        for(int i = 0; i < DealNum; i++)
         {
             PlayerHand.Add(Deck.GetCard(GameDeck));
         }
         for(int i = 0; i < PlayerHand.Count; i++)
         {
-           cards[i].sprite = spriteAtlas.GetSprite($"Card_{(int)PlayerHand[i].CardSuit * 13 + PlayerHand[i].CardNumber - 1}");
+           Playercards[i].sprite = spriteAtlas.GetSprite($"Card_{(int)PlayerHand[i].CardSuit * 13 + PlayerHand[i].CardNumber - 1}");
             Debug.Log($"{PlayerHand[i].CardSuit}:{PlayerHand[i].CardNumber}");
         }
-        Debug.Log(PokerHand.CardHand(PlayerHand));
+        Debug.Log($"自分の手札は{PokerHand.CardHand(PlayerHand)}");
+        Text ShowDealText = ShowDeal.GetComponent<Text>();
+        ShowDealText.text = "Show…";
+
+        EnemyHand.Clear();
+        if(GameDeck.Count > DealNum)
+        {
+            GameDeck.Clear();
+            GameDeck = Deck.ShuffleDeck(Deck.GetDeck());
+        }
+        for(int i = 0; i < DealNum; i++)
+        {
+            EnemyHand.Add(Deck.GetCard(GameDeck));
+        }
+    for(int i = 0; i < EnemyHand.Count; i++)
+        {
+            EnemyCards[i].sprite = spriteAtlas.GetSprite(
+                $"Card_{(int)EnemyHand[i].CardSuit * 13 + EnemyHand[i].CardNumber - 1}");
+        Debug.Log($"{EnemyHand[i].CardSuit}:{EnemyHand[i].CardNumber}");
+        }
+        Debug.Log($"相手の手段は{ PokerHand.CardHand(EnemyHand)}");
+        GameResult.GameResultTextView(PokerHand.CardHand(EnemyHand) < PokerHand.CardHand(PlayerHand));///式だけでもbool変数は成り立つ
     }
 
 }
